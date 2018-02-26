@@ -145,7 +145,7 @@ def make_coef_dic(model_coef):
         i += 1
     return coef
    
-   
+  
 show_rows=0
 wstecz_start=1
 ile_wstecz=4
@@ -154,12 +154,10 @@ client='XXX'
 data = import_data(client)
 data = make_autoregression(data,wstecz_start,ile_wstecz)
 data = convert_data(data)   
-data_orignal = data.copy()
 data = standard_data(data)
 datay=data.copy()   
 datay = clean_datay(datay,wstecz_start,ile_wstecz,show_rows)
 data = clean_data(data,show_rows)
-
 
 model = [linear_model.LinearRegression(),
         linear_model.LassoLars(alpha=.1),
@@ -175,6 +173,13 @@ model = [linear_model.LinearRegression(),
         linear_model.ElasticNet(alpha=100.0, l1_ratio=110.5),
         linear_model.ElasticNet(alpha=100000.0, l1_ratio=11110.5)]
       
-#original_column_name = list(data.columns.values)
-print (model_calculation(data,datay,model))
-    
+model_calculation(data,datay,model).to_csv('results.csv')
+
+--- Import pliku powiódł się w czasie 1.42 sek.
+--- Autoregresja wykonała się w czasie 21.28 sek.
+--- Conversja wykonała się w czasie 0.02 sek.
+--- Standaryzacja wykonała się w czasie 0.01 sek.
+--- Czyszcenie datay wykonała się w czasie 0.00 sek.
+--- Czyszczenie data wykonała się w czasie 0.00 sek.
+--- Obliczanie modeli wykonało się w czasie 0.25 sek.
+
