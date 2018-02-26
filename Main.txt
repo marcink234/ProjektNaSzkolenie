@@ -205,6 +205,7 @@ W pliku "results.csv" w kolejnych kolumnach znajdują się:
 3) r2_score
 4-6) współczyniki modelu dla autoregresji (trzy wartości wstecz)
 7-9) współczyniki modelu dla misiąca,dnia,godziny
+Cel zadania była taki by model miał jak najmiejszy średni błąd kwadratowy, ale równocześnie by uwzględniał wszystkie parametry.
 
 
 regrasja , wspolczyniki, przeuczenie, zalzyc by poprzednienominacje byly ok
