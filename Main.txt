@@ -1,0 +1,146 @@
+try:
+    import time
+    start_time = time.time()
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import MinMaxScaler
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.feature_extraction.text import CountVectorizer
+    import pprint
+    from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
+    from sklearn.metrics import accuracy_score
+    from sklearn.ensemble import RandomForestClassifier
+    import pandas as pd
+    import numpy as np
+    from sklearn import svm
+    from sklearn.datasets import make_regression
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+
+    from sklearn import linear_model
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.neural_network import MLPRegressor
+    from sklearn.tree import DecisionTreeRegressor
+
+    from sklearn.metrics import r2_score
+    from sklearn.metrics import mean_squared_error
+    from sklearn.metrics import explained_variance_score
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import median_absolute_error
+    from sklearn.preprocessing import StandardScaler
+
+    from sklearn.svm import LinearSVC
+    print("--- Import bibliotek powiód³ siê w czasie %0.2f sek." % (time.time() - start_time)) 
+except:
+    print ('!!! Brak zainstlowanych bibliotek')
+    
+def import_data(client):
+    try:
+        start_time = time.time()
+        data = pd.read_excel('/home/kodolamacz/XXX/'+client+'.xlsx',
+                         sheetname = 'Tabelle1', skiprows=1)
+        data=data.iloc[1:].copy()
+        print("--- Import pliku powiód³ siê w czasie %0.2f sek." % (time.time() - start_time)) 
+        return data
+    except:
+        print ('!!! Import pliku nie powiód³ siê')
+        
+def make_autoregression(data,wstecz_start,ile_wstecz):
+    start_time = time.time()
+    for j in range(wstecz_start,ile_wstecz):
+        data.loc[j, 'NOMB_QN_'+str(j)] = data.loc[j, 'NOMB_QN']
+        for k in range(1,j):
+            data.loc[k, 'NOMB_QN_'+str(j)] = data.loc[1, 'NOMB_QN']
+            data.loc[len(data)-j+1, 'NOMB_QN_'+str(j)] = data.loc[len(data), 'NOMB_QN']
+        for i in range(j, len(data)):
+            data.loc[i+1, 'NOMB_QN_'+str(j)] = data.loc[i-j+1, 'NOMB_QN']
+    print("--- Autoregresja wykona³a siê w czasie %0.2f sek." % (time.time() - start_time)) 
+    return data
+
+def convert_data(data):
+    start_time = time.time()
+    data['month'] = data.Validierungsstatus.dt.month
+    data['day'] = data.Validierungsstatus.dt.day
+    data['hour'] = data.Validierungsstatus.dt.hour
+    del data['Validierungsstatus']
+    del data['WGV_RELEASE_QN'] 
+    data = data.reset_index(drop=True)
+    print("--- Conversja wykona³a siê w czasie %0.2f sek." % (time.time() - start_time)) 
+    return data
+
+def standard_data(data):
+    start_time = time.time()
+    original_column_name = list(data.columns.values)
+    scaler = StandardScaler()
+    scaled_df = scaler.fit_transform(data)
+    data = pd.DataFrame(scaled_df,columns=original_column_name)
+    print("--- Standaryzacja wykona³a siê w czasie %0.2f sek." % (time.time() - start_time)) 
+    return data
+
+def clean_datay(datay,wstecz_start,ile_wstecz,show_rows):
+    start_time = time.time()
+    to_remove_datay = ['LIMIT_EXIT_MAX_QN','LIMIT_ENTRY_MAX_QN','month','day','hour']
+    for column in to_remove_datay:
+        del datay[column]
+    for j in range(wstecz_start,ile_wstecz):    
+        del datay['NOMB_QN_'+str(j)]
+    if show_rows > 0:
+        print ('--- datay')
+        print (datay.head(show_rows))
+    print("--- Czyszcenie datay wykona³a siê w czasie %0.2f sek." % (time.time() - start_time)) 
+    return datay
+
+def clean_data(data,show_rows):
+    start_time = time.time()
+    to_remove_data = ['LIMIT_EXIT_MAX_QN','LIMIT_ENTRY_MAX_QN','NOMB_QN']
+    for column in to_remove_data:
+        del data[column]
+    if show_rows > 0:
+        print ('--- data')
+        print (data.head(show_rows))
+    print("--- Czyszczenie data wykona³a siê w czasie %0.2f sek." % (time.time() - start_time)) 
+    return data
+
+def model_calculation(data,datay,model):
+    start_time = time.time()
+    X_train, X_test , y_train, y_test = train_test_split(data,datay,test_size=0.33)    
+    results = pd.DataFrame(columns=["model","me_sq_error","r2_score",\
+                                   "NOMB_QN_1","NOMB_QN_2","NOMB_QN_3",\
+                                   "month","day", "hour"])   
+
+    for i in range(0,len(model)):   
+        modelx = model[i]
+        modelx.fit(X_train,y_train)
+        model_str = str(model[i])[:str(model[i]).find(",")]
+        mean_squared_error2 = "%0.2f" % (mean_squared_error(y_test, modelx.predict(X_test)))
+        r2_score2 = "%0.2f" % (r2_score(y_test, modelx.predict(X_test)))          
+
+        coef_dic = make_coef_dic(modelx.coef_)
+        add = pd.DataFrame([[model_str,mean_squared_error2,r2_score2,\
+                             "%0.2f" % coef_dic["NOMB_QN_1"],"%0.2f" % coef_dic["NOMB_QN_2"],\
+                             "%0.2f" % coef_dic["NOMB_QN_3"],\
+                             "%0.3f" % coef_dic["month"],"%0.3f" % coef_dic["day"],"%0.3f" % coef_dic["hour"]]]\
+                       ,columns=["model","me_sq_error","r2_score","NOMB_QN_1","NOMB_QN_2","NOMB_QN_3",\
+                                 "month","day", "hour"])
+        results = results.append(add) 
+       
+    print("--- Obliczanie modeli wykona³o siê w czasie %0.2f sek." % (time.time() - start_time)) 
+
+    return results
+
+def make_coef_dic(model_coef):
+    coef_val=[]
+    try:
+        for i in model_coef:
+            for j in i:        
+                coef_val.append(j)
+    except:        
+        for i in model_coef:       
+            coef_val.append(i)
+    coef={}
+    i=0
+    for column in original_column_name:
+        coef[column]=coef_val[i]
+        i += 1
+    return coef
