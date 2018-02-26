@@ -175,6 +175,7 @@ model = [linear_model.LinearRegression(),
       
 model_calculation(data,datay,model).to_csv('results.csv')
 
+####### output
 --- Import pliku powiódł się w czasie 1.42 sek.
 --- Autoregresja wykonała się w czasie 21.28 sek.
 --- Conversja wykonała się w czasie 0.02 sek.
@@ -183,3 +184,20 @@ model_calculation(data,datay,model).to_csv('results.csv')
 --- Czyszczenie data wykonała się w czasie 0.00 sek.
 --- Obliczanie modeli wykonało się w czasie 0.25 sek.
 
+####### results.csv
+model	             me_sq_error  r2_score    NOMB_QN_1	 NOMB_QN_2 	NOMB_QN_3	month	day	     hour
+LinearRegression(          	0.01	0.99		1.00		0.01		-0.01	0.001	-0.000	0.000
+LassoLars(alpha=0.1	        1.00	-0.00		0.00		0.00		0.00	0.000	0.000	0.000
+RidgeCV(alphas=(0.1      	0.01	0.99		1.00		0.01		-0.01	0.001	-0.000	0.000
+RidgeCV(alphas=[1e-06	    0.01	0.99		1.00		0.01		-0.01	0.001	-0.000	0.000
+Ridge(alpha=200	            0.97	0.03		0.00		0.00		0.00	0.000	-0.000	-0.000
+Lasso(alpha=0.1	            0.02	0.98		0.90		0.00		0.00	0.000	-0.000	-0.000
+Lasso(alpha=10	            1.00	-0.00		0.00		0.00		0.00	0.000	-0.000	-0.000
+Lasso(alpha=100	            1.00	-0.00		0.00		0.00		0.00	0.000	-0.000	-0.000
+ElasticNet(alpha=1	        0.08	0.92		0.25		0.25		0.24	0.008	-0.006	-0.002
+ElasticNet(alpha=10	        0.60	0.40		0.08		0.08		0.08	0.004	-0.003	-0.000
+ElasticNet(alpha=1.0	    0.34	0.66		0.15		0.14		0.13	0.000	-0.000	-0.000
+ElasticNet(alpha=100.0	    1.00	-0.00		-0.00		-0.00		-0.00	-0.000	0.000	0.000
+ElasticNet(alpha=100000.0	1.00	-0.00		-0.00		-0.00		-0.00	-0.000	0.000	0.000
+
+####### komentarz
