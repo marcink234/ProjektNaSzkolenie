@@ -4,13 +4,11 @@ try:
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import MinMaxScaler
     from sklearn.linear_model import LogisticRegression
-    from sklearn.tree import DecisionTreeClassifier
     from sklearn.naive_bayes import MultinomialNB
     from sklearn.feature_extraction.text import CountVectorizer
     import pprint
     from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
     from sklearn.metrics import accuracy_score
-    from sklearn.ensemble import RandomForestClassifier
     import pandas as pd
     import numpy as np
     from sklearn import svm
@@ -201,3 +199,12 @@ ElasticNet(alpha=100.0	    1.00	-0.00		-0.00		-0.00		-0.00	-0.000	0.000	0.000
 ElasticNet(alpha=100000.0	1.00	-0.00		-0.00		-0.00		-0.00	-0.000	0.000	0.000
 
 ####### komentarz
+W pliku "results.csv" w kolejnych kolumnach znajdują się:
+1) nazwa modelu i jego pierwszy parametr
+2) średni błąd kwadratowy
+3) r2_score
+4-6) współczyniki modelu dla autoregresji (trzy wartości wstecz)
+7-9) współczyniki modelu dla misiąca,dnia,godziny
+
+
+regrasja , wspolczyniki, przeuczenie, zalzyc by poprzednienominacje byly ok
